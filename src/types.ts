@@ -5,12 +5,39 @@ export enum ViewState {
   AI_TUTOR = 'AI_TUTOR'
 }
 
+export type Grade = 'CP' | 'CE1' | 'CE2' | 'CM1' | 'CM2';
+
+export interface GradeInfo {
+  grade: Grade;
+  age: number;
+  label: string;
+}
+
+export const GRADES: GradeInfo[] = [
+  { grade: 'CP', age: 6, label: 'CP' },
+  { grade: 'CE1', age: 7, label: 'CE1' },
+  { grade: 'CE2', age: 8, label: 'CE2' },
+  { grade: 'CM1', age: 9, label: 'CM1' },
+  { grade: 'CM2', age: 10, label: 'CM2' },
+];
+
+export const AVATAR_COLORS = [
+  'bg-blue-500',
+  'bg-purple-500',
+  'bg-pink-500',
+  'bg-green-500',
+  'bg-orange-500',
+  'bg-red-500',
+  'bg-teal-500',
+  'bg-indigo-500',
+];
+
 export interface UserProfile {
   id: string;
   name: string;
   role: 'PARENT' | 'CHILD';
   age?: number;
-  grade?: 'CE2' | 'CM2';
+  grade?: Grade;
   avatarColor: string;
 }
 

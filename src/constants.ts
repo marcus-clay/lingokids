@@ -9,11 +9,9 @@ export const INITIAL_USER_PROGRESS: UserProgress = {
   gems: 0
 };
 
-// Profiles configuration
-export const PROFILES: UserProfile[] = [
+// Default profiles configuration (used only for initial setup)
+export const DEFAULT_PROFILES: UserProfile[] = [
   { id: 'parent', name: 'Parent', role: 'PARENT', avatarColor: 'bg-gray-800' },
-  { id: 'mila', name: 'Mila', role: 'CHILD', age: 10, grade: 'CM2', avatarColor: 'bg-purple-500' },
-  { id: 'eva', name: 'Eva', role: 'CHILD', age: 8, grade: 'CE2', avatarColor: 'bg-pink-500' },
 ];
 
 // Initial lessons - mostly locked

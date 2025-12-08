@@ -1,20 +1,34 @@
-import React from 'react';
-import { PROFILES } from '../constants';
+import React, { useState, useEffect } from 'react';
 import { UserProfile } from '../types';
-import { Check, ShieldCheck } from 'lucide-react';
+import { ShieldCheck, Plus } from 'lucide-react';
+import { storageService } from '../services/storageService';
+import { AddChildProfile } from './AddChildProfile';
 
 interface LoginViewProps {
   onLogin: (profile: UserProfile) => void;
 }
 
 export const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
-  const [step, setStep] = React.useState<'LOGIN' | 'PROFILE'>('LOGIN');
+  const [step, setStep] = useState<'LOGIN' | 'PROFILE' | 'ADD_CHILD'>('LOGIN');
+  const [profiles, setProfiles] = useState<UserProfile[]>([]);
+
+  useEffect(() => {
+    // Load profiles from storage
+    const loadedProfiles = storageService.getProfiles();
+    setProfiles(loadedProfiles);
+  }, []);
 
   const handleGoogleLogin = () => {
     // Simulate auth delay
     setTimeout(() => {
         setStep('PROFILE');
     }, 800);
+  };
+
+  const handleCreateProfile = (profileData: Omit<UserProfile, 'id'>) => {
+    storageService.createProfile(profileData);
+    setProfiles(storageService.getProfiles());
+    setStep('PROFILE');
   };
 
   if (step === 'LOGIN') {
@@ -62,13 +76,30 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
     );
   }
 
+  // Add Child Profile View
+  if (step === 'ADD_CHILD') {
+    return (
+      <AddChildProfile
+        onCreateProfile={handleCreateProfile}
+        onCancel={() => setStep('PROFILE')}
+      />
+    );
+  }
+
+  // Profile Selection View
+  const childProfiles = profiles.filter(p => p.role === 'CHILD');
+  const parentProfile = profiles.find(p => p.role === 'PARENT');
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
-        <div className="w-full max-w-2xl text-center">
-            <h2 className="text-3xl font-rounded font-bold text-gray-900 mb-8 animate-in fade-in slide-in-from-bottom-4">Who is learning today?</h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {PROFILES.map((profile, idx) => (
+        <div className="w-full max-w-3xl text-center">
+            <h2 className="text-3xl font-rounded font-bold text-gray-900 mb-8 animate-in fade-in slide-in-from-bottom-4">
+              Qui apprend aujourd'hui ?
+            </h2>
+
+            {/* Child Profiles */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                {childProfiles.map((profile, idx) => (
                     <button
                         key={profile.id}
                         onClick={() => onLogin(profile)}
@@ -83,15 +114,43 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
                         </div>
                         <div>
                             <div className="font-bold text-xl text-gray-900">{profile.name}</div>
-                            {profile.role === 'CHILD' ? (
-                                <div className="text-sm font-medium text-gray-400 mt-1">{profile.grade} • {profile.age}yo</div>
-                            ) : (
-                                <div className="text-sm font-medium text-primary-500 mt-1 uppercase tracking-wider">Dashboard</div>
-                            )}
+                            <div className="text-sm font-medium text-gray-400 mt-1">{profile.grade} • {profile.age} ans</div>
                         </div>
                     </button>
                 ))}
+
+                {/* Add Child Button */}
+                <button
+                    onClick={() => setStep('ADD_CHILD')}
+                    className={`
+                        bg-white rounded-3xl p-6 border-2 border-dashed border-gray-200 hover:border-primary-300 hover:bg-primary-50 transition-all duration-300 group
+                        flex flex-col items-center justify-center gap-4 animate-in zoom-in-50 fill-mode-both
+                    `}
+                    style={{ animationDelay: `${childProfiles.length * 100}ms` }}
+                >
+                    <div className="w-24 h-24 rounded-full bg-gray-100 group-hover:bg-primary-100 flex items-center justify-center text-gray-400 group-hover:text-primary-500 transition-all">
+                        <Plus size={40} />
+                    </div>
+                    <div>
+                        <div className="font-bold text-xl text-gray-500 group-hover:text-primary-600">Ajouter un enfant</div>
+                    </div>
+                </button>
             </div>
+
+            {/* Parent Profile */}
+            {parentProfile && (
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                    <button
+                        onClick={() => onLogin(parentProfile)}
+                        className="inline-flex items-center gap-3 bg-gray-800 hover:bg-gray-900 text-white px-6 py-3 rounded-xl transition-all duration-200"
+                    >
+                        <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-sm font-bold">
+                            {parentProfile.name[0]}
+                        </div>
+                        <span className="font-medium">Espace Parent</span>
+                    </button>
+                </div>
+            )}
         </div>
     </div>
   );
