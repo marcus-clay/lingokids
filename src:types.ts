@@ -43,5 +43,8 @@ export interface Exercise {
   question: string;
   options?: string[];
   correctAnswer: string;
-  type: 'multiple-choice' | 'translate' | 'speak';
+  type: 'multiple-choice' | 'translate' | 'speak' | 'word-order';
+  // For word-order exercises
+  words?: string[];
+  correctOrder?: string[];
 }

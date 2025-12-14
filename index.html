@@ -2,7 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <title>LingoKids English</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,9 +47,16 @@
       }
     </script>
     <style>
+      :root {
+        --sat: env(safe-area-inset-top);
+        --sar: env(safe-area-inset-right);
+        --sab: env(safe-area-inset-bottom);
+        --sal: env(safe-area-inset-left);
+      }
       body {
         background-color: #f8fafc;
         -webkit-font-smoothing: antialiased;
+        -webkit-tap-highlight-color: transparent;
       }
       .no-scrollbar::-webkit-scrollbar {
         display: none;
@@ -55,6 +64,34 @@
       .no-scrollbar {
         -ms-overflow-style: none;
         scrollbar-width: none;
+      }
+      /* iOS Safe Areas */
+      .safe-area-top {
+        padding-top: max(0px, env(safe-area-inset-top));
+      }
+      .safe-area-bottom {
+        padding-bottom: max(8px, env(safe-area-inset-bottom));
+      }
+      /* Smooth scrolling */
+      * {
+        -webkit-overflow-scrolling: touch;
+      }
+      /* Prevent overscroll bounce on iOS */
+      html, body {
+        overscroll-behavior: none;
+        height: 100%;
+      }
+      /* Animation utilities */
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-in {
+        animation: fadeIn 0.3s ease-out forwards;
+      }
+      /* Touch feedback */
+      button:active {
+        transform: scale(0.98);
       }
     </style>
   </head>
