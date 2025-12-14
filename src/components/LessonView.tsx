@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Lesson, Exercise, UserProfile } from '../types';
 import { ArrowLeft, Volume2, CheckCircle, XCircle, Sparkles, RotateCcw, Lightbulb } from 'lucide-react';
-import { generateLessonContent, speak, speakWithWebSpeech } from '../services/geminiService';
+import { generateLessonContent, speak, speakWord, speakFeedback, initVoices } from '../services/geminiService';
 
 interface LessonViewProps {
   lesson: Lesson;
@@ -27,13 +27,7 @@ export const LessonView: React.FC<LessonViewProps> = ({ lesson, user, onComplete
 
   // Initialize speech synthesis voices on mount
   useEffect(() => {
-    if ('speechSynthesis' in window) {
-      // Load voices - they may load asynchronously
-      window.speechSynthesis.getVoices();
-      window.speechSynthesis.onvoiceschanged = () => {
-        window.speechSynthesis.getVoices();
-      };
-    }
+    initVoices();
   }, []);
 
   // Fetch content from Gemini on mount or step change
@@ -114,11 +108,11 @@ export const LessonView: React.FC<LessonViewProps> = ({ lesson, user, onComplete
     }
   };
 
-  // Quick speak for options (uses Web Speech for faster response)
+  // Quick speak for words/options (uses Gemini TTS with caching)
   const handleQuickSpeak = async (text: string) => {
     setSpeakingWord(text);
     try {
-      await speakWithWebSpeech(text);
+      await speakWord(text);
     } catch (error) {
       console.error("Quick speech error:", error);
     } finally {
@@ -183,17 +177,17 @@ export const LessonView: React.FC<LessonViewProps> = ({ lesson, user, onComplete
 
     setIsCorrect(correct);
 
-    // Speak feedback
+    // Speak feedback with appropriate voice
     if (correct) {
-      await handleSpeak("Excellent! Well done!");
+      await speakFeedback("Excellent! Well done!");
     } else {
-      await handleSpeak(`The correct answer is: ${exercise.correctAnswer}`);
+      await speakFeedback(`The correct answer is: ${exercise.correctAnswer}`);
     }
   };
 
   const handleNext = async () => {
     if (step >= 3) {
-      await handleSpeak("Congratulations! You completed the lesson!");
+      await speakFeedback("Congratulations! You completed the lesson!");
       onComplete(3);
     } else {
       setStep(s => s + 1);

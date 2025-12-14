@@ -10,7 +10,7 @@ export interface UserProfile {
   name: string;
   role: 'PARENT' | 'CHILD';
   age?: number;
-  grade?: 'CE2' | 'CM2';
+  grade?: 'CE1' | 'CE2' | 'CM1' | 'CM2';
   avatarColor: string;
 }
 

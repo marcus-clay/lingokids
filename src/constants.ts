@@ -12,6 +12,7 @@ export const INITIAL_USER_PROGRESS: UserProgress = {
 // Profiles configuration
 export const PROFILES: UserProfile[] = [
   { id: 'parent', name: 'Parent', role: 'PARENT', avatarColor: 'bg-gray-800' },
+  { id: 'gilberto', name: 'Gilberto', role: 'CHILD', age: 9, grade: 'CM1', avatarColor: 'bg-blue-500' },
   { id: 'mila', name: 'Mila', role: 'CHILD', age: 10, grade: 'CM2', avatarColor: 'bg-purple-500' },
   { id: 'eva', name: 'Eva', role: 'CHILD', age: 8, grade: 'CE2', avatarColor: 'bg-pink-500' },
 ];
