@@ -41,18 +41,38 @@ export const generateLessonContent = async (topic: string, profile: UserProfile)
     const ageContext = profile.age ? `${profile.age} years old (${profile.grade})` : '8 years old';
     const complexity = profile.grade === 'CM2' ? 'intermediate (A1)' : 'beginner (A0)';
     
-    const prompt = `Create a short, engaging English lesson exercise for a French child who is ${ageContext}. 
+    const prompt = `Create a short, engaging English lesson exercise for a French child who is ${ageContext}.
     The difficulty should be ${complexity}. The topic is "${topic}".
-    
+
+    IMPORTANT: Generate REAL, meaningful answer options - NOT generic labels like "Option A", "Option B", etc.
+    Each option must be an actual word, phrase, or answer related to the question.
+
     Return ONLY a JSON object with this structure:
     {
       "question": "The question text in English. Simple sentence.",
-      "options": ["Option A", "Option B", "Option C", "Option D"],
-      "correctAnswer": "The correct option text",
+      "options": ["Apple", "Banana", "Orange", "Grape"],
+      "correctAnswer": "Apple",
       "explanation": "A short, encouraging explanation in French."
     }
-    
-    Ensure options are distinct. Do not wrap in markdown code blocks.`;
+
+    Example for a colors topic:
+    {
+      "question": "What color is the sky?",
+      "options": ["Blue", "Red", "Green", "Yellow"],
+      "correctAnswer": "Blue",
+      "explanation": "Le ciel est bleu (Blue) ! Très bien !"
+    }
+
+    Example for a greetings topic:
+    {
+      "question": "How do you say 'Bonjour' in English?",
+      "options": ["Hello", "Goodbye", "Thank you", "Please"],
+      "correctAnswer": "Hello",
+      "explanation": "'Bonjour' se dit 'Hello' en anglais. Excellent !"
+    }
+
+    NEVER use "Option A", "Option B", "Option C", "Option D" as answers.
+    Ensure options are distinct and realistic. Do not wrap in markdown code blocks.`;
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
